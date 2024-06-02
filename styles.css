@@ -87,20 +87,34 @@ main {
 }
 
 .grid div {
-    border: 1px solid rgba(0, 0, 0, 0.6);
+    border: 3px solid rgba(0, 0, 0, 0.6);
 }
 
 .grid_elem {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2rem;
+    font-size: 4rem;
     font-weight: bold;
 }
 
 .grid_elem.won {
     background-color: rgba(0, 255, 0, 0.4);
 }
+
+.grid_elem[id*='r_0']{
+    border-top: none;
+}
+.grid_elem[id*='r_2']{
+    border-bottom: none;
+}
+.grid_elem[id*='c_2']{
+    border-right: none;
+}
+.grid_elem[id*='c_0']{
+    border-left: none;
+}
+
 /* Dialog */
 
 dialog {
