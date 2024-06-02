@@ -187,7 +187,7 @@ const tictactoe = (function() {
         let player2;
         const Board = Gameboard();
         let game;
-        let round = 0;
+        let round = 1;
     
         const initDialog = function() {
             const dialog = document.getElementById("restart-game");
@@ -218,10 +218,12 @@ const tictactoe = (function() {
         const getGridElem = function(event) {
             const player = game.showPlayer();
             let target = event.target;
-            target.textContent = player.marker
             if (target.className != "grid_elem") return
             let [pos_r, pos_c] = target.id.match(/\d+/g);
-            playGame(parseInt(pos_c), parseInt(pos_r));
+            if (playGame(parseInt(pos_c), parseInt(pos_r))) {
+                round +=1;
+                target.textContent = player.marker
+            }
         }
     
         const showPlayerActual = function() {
@@ -240,7 +242,7 @@ const tictactoe = (function() {
         
         const initGame = function() {
             const grid = document.getElementsByClassName("grid")[0];
-            round = 0;
+            round = 1;
             initGetPlayer();
             initDialog();
             Board.generateBoard();
@@ -286,9 +288,9 @@ const tictactoe = (function() {
         }
     
         const playGame = function(pos_c, pos_r) {
-            round +=1;
-            game.playRound(pos_c, pos_r);
+            const play = game.playRound(pos_c, pos_r);
             checkResult();
+            return play;
         }
     
         return {initGame};
