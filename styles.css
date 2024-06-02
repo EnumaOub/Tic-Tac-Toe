@@ -1,0 +1,45 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+/* Header parameters */
+
+header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 3rem;
+    border-bottom: 1px solid rgb(0,0,0);
+    box-shadow: 1rem 0 1rem var(--shadow-box);
+    background-color: var(--back-header);
+}
+
+header h1 {
+    font-size: 3rem;
+    margin-top: 0.5rem;
+    margin-left: 0.5rem;
+}
+
+/* Footer */
+
+footer {
+    position: fixed;
+    bottom: 0;
+    background-color: var(--back-header);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    padding: 1rem 3rem;
+    border-top: 1px solid rgb(0,0,0);
+    box-shadow: 1rem 0 1rem var(--shadow-box);
+
+}
+
+
+
