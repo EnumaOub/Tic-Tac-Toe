@@ -3,6 +3,10 @@
     margin: 0;
 }
 
+body {
+    font-family: system-ui, sans-serif; 
+}
+
 /* Header parameters */
 
 header {

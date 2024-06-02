@@ -181,126 +181,128 @@ const tictactoe = (function() {
         return {resetGame, endGame, playRound, showPlayer};
     }
 
-    return {Player, Gameboard, gameController}
+    const displayController = function(){
+
+        let player1;
+        let player2;
+        const Board = Gameboard();
+        let game;
+        let round = 0;
+    
+        const initDialog = function() {
+            const dialog = document.getElementById("restart-game");
+            dialog.close();
+    
+            const Restart_btn = document.getElementById("restart");
+            Restart_btn.addEventListener("click", function(event){
+                initGame();
+            });
+    
+        }
+    
+        const initGetPlayer = function() {
+            const p1_input = document.getElementById("player1");
+            const p2_input = document.getElementById("player2");
+    
+            if (p1_input.value.length === 0) {
+                p1_input.value = "Joe";
+            }
+            if (p2_input.value.length === 0) {
+                p2_input.value = "Ana";
+            }
+    
+            player1 = Player(p1_input.value, "X");
+            player2 = Player(p2_input.value, "O");
+        }
+    
+        const getGridElem = function(event) {
+            const player = game.showPlayer();
+            let target = event.target;
+            target.textContent = player.marker
+            if (target.className != "grid_elem") return
+            let [pos_r, pos_c] = target.id.match(/\d+/g);
+            playGame(parseInt(pos_c), parseInt(pos_r));
+        }
+    
+        const showPlayerActual = function() {
+            const player = game.showPlayer();
+            const p1_div = document.getElementsByClassName("player1")[0];
+            const p2_div = document.getElementsByClassName("player2")[0];
+            if (player.marker == "X") {
+                p1_div.classList.add("active");
+                p2_div.classList.remove("active");
+            }
+            else {
+                p2_div.classList.add("active")
+                p1_div.classList.remove("active");
+            }
+        }
+        
+        const initGame = function() {
+            const grid = document.getElementsByClassName("grid")[0];
+            round = 0;
+            initGetPlayer();
+            initDialog();
+            Board.generateBoard();
+            game = gameController(player1, player2, Board);
+            game.resetGame();
+            
+            grid.onclick = function(event) {
+                getGridElem(event);
+                showPlayerActual();
+            }
+        }
+    
+        // Generate the final result
+        const genResult = function() {
+            const last_player = game.showPlayer();
+            const players = [player1, player2];
+            const player_actual = players.filter(function(elem) {return elem.marker != last_player.marker})[0];
+            
+            const result_div = document.getElementById("result-game");
+            if (round == 9) {
+                result_div.textContent = `Its a tie. Do you want to restart a game ?`
+            }
+            else {
+                result_div.textContent = `Congratulation ${player_actual.name} won. Do you want to restart a game ?`
+            }
+        }
+    
+        // Check if we have ended the game and show the message
+        const checkResult = function() {
+    
+            if (game.endGame()) {
+                const grid = document.getElementsByClassName("grid")[0];
+                const dialog = document.getElementById("restart-game");
+                
+                genResult();
+                //Reset grid event
+                grid.onclick = function() {
+                    return false;
+                }
+                // Show Modal
+                dialog.showModal();
+            }
+        }
+    
+        const playGame = function(pos_c, pos_r) {
+            round +=1;
+            game.playRound(pos_c, pos_r);
+            checkResult();
+        }
+    
+        return {initGame};
+        
+    }
+
+    return {displayController}
 
 })()
 
 
-function displayController(){
 
-    let player1;
-    let player2;
-    const Board = tictactoe.Gameboard();
-    let game;
-    let round = 0;
 
-    const initDialog = function() {
-        const dialog = document.getElementById("restart-game");
-        dialog.close();
-
-        const Restart_btn = document.getElementById("restart");
-        Restart_btn.addEventListener("click", function(event){
-            initGame();
-        });
-
-    }
-
-    const initGetPlayer = function() {
-        const p1_input = document.getElementById("player1");
-        const p2_input = document.getElementById("player2");
-
-        if (p1_input.value.length === 0) {
-            p1_input.value = "Joe";
-        }
-        if (p2_input.value.length === 0) {
-            p2_input.value = "Ana";
-        }
-
-        player1 = tictactoe.Player(p1_input.value, "X");
-        player2 = tictactoe.Player(p2_input.value, "O");
-    }
-
-    const getGridElem = function(event) {
-        const player = game.showPlayer();
-        let target = event.target;
-        target.textContent = player.marker
-        if (target.className != "grid_elem") return
-        let [pos_r, pos_c] = target.id.match(/\d+/g);
-        playGame(parseInt(pos_c), parseInt(pos_r));
-    }
-
-    const showPlayerActual = function() {
-        const player = game.showPlayer();
-        const p1_div = document.getElementsByClassName("player1")[0];
-        const p2_div = document.getElementsByClassName("player2")[0];
-        if (player.marker == "X") {
-            p1_div.classList.add("active");
-            p2_div.classList.remove("active");
-        }
-        else {
-            p2_div.classList.add("active")
-            p1_div.classList.remove("active");
-        }
-    }
-    
-    const initGame = function() {
-        const grid = document.getElementsByClassName("grid")[0];
-        round = 0;
-        initGetPlayer();
-        initDialog();
-        Board.generateBoard();
-        game = tictactoe.gameController(player1, player2, Board);
-        game.resetGame();
-        
-        grid.onclick = function(event) {
-            getGridElem(event);
-            showPlayerActual();
-        }
-    }
-
-    // Generate the final result
-    const genResult = function() {
-        const last_player = game.showPlayer();
-        const players = [player1, player2];
-        const player_actual = players.filter(function(elem) {return elem.marker != last_player.marker})[0];
-        
-        const result_div = document.getElementById("result-game");
-        if (round == 9) {
-            result_div.textContent = `Its a tie. Do you want to restart a game ?`
-        }
-        else {
-            result_div.textContent = `Congratulation ${player_actual.name} won. Do you want to restart a game ?`
-        }
-    }
-
-    // Check if we have ended the game and show the message
-    const checkResult = function() {
-
-        if (game.endGame()) {
-            const grid = document.getElementsByClassName("grid")[0];
-            const dialog = document.getElementById("restart-game");
-            
-            genResult();
-            //Reset grid event
-            grid.onclick = function() {
-                return false;
-            }
-            // Show Modal
-            dialog.showModal();
-        }
-    }
-
-    const playGame = function(pos_c, pos_r) {
-        round +=1;
-        game.playRound(pos_c, pos_r);
-        checkResult();
-    }
-
-    return {initGame};
-    
-}
-
-displayController().initGame()
+tictactoe.displayController().initGame()
 
 // tictactoe.Gameboard().generateBoard()
 
