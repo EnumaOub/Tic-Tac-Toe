@@ -7,10 +7,24 @@ const tictactoe = (function() {
     
         const generateBoard = function() {
             board = Array();
+            const container = document.getElementsByClassName("grid")[0];
+            [...document.getElementsByClassName("grid_elem")].map(n => n && n.remove());
             for (let row=0; row<rows; row++) {
                 board.push([...Array(cols)])
+                for (let col=0; col<cols; col++) {
+                    const grid_elem = document.createElement("div");
+                    grid_elem.className = "grid_elem"
+                    grid_elem.id = `r_${row}_c_${col}`
+                    container.appendChild(grid_elem);
+                }
             }
             console.log(`We generate the board ${board}`)
+            container.onclick = function(event) {
+                let target = event.target;
+                if (target.className != "grid_elem") return
+                let value = target.id.match(/\d+/g);
+                GetOp(value);
+            }
         }
     
         const checkPosition = function(pos_c, pos_r) {
@@ -61,7 +75,7 @@ const tictactoe = (function() {
         const updateLastPlayer = function() {
             const players = [player1, player2];
             if (round == 0) {
-                last_player = players.filter(function(elem) {return elem.marker == "x"})[0];
+                last_player = players.filter(function(elem) {return elem.marker == "X"})[0];
             }
             else {
                 last_player = players.filter(function(elem) {return elem.marker != last_player.marker})[0];
@@ -71,20 +85,19 @@ const tictactoe = (function() {
         const resetGame = function() {
                 round = 0;
                 updateLastPlayer();
-                Board.generateBoard();
         }
     
         
         const endGame = function() {
-            if (round > 4 && checkResult(last_player.marker)) {
-                last_player.increaseResult();
-                console.log(`player: ${last_player.name} WIN !!!`);
-                resetGame();
+            const players = [player1, player2];
+            const player_actual = players.filter(function(elem) {return elem.marker != last_player.marker})[0];
+            if (round > 4 && checkResult(player_actual.marker)) {
+                player_actual.increaseResult();
+                console.log(`player: ${player_actual.name} WIN !!!`);
                 return true;
             }
             else if (round == 9) {
                 console.log(`No Player WIN !!!`);
-                resetGame();
                 return true;
             }
             else {
@@ -94,16 +107,26 @@ const tictactoe = (function() {
         }
     
         const playRound = function(pos_c, pos_r) {
-            updateLastPlayer();
+            
             round += 1;
             console.log(`Round: ${round}`);
             console.log(`player: ${last_player.name}`);
             const play = Board.updateBoard(pos_c, pos_r, last_player.marker);
             if (!(play)) {
                 round -= 1;
+            }
+            else {
                 updateLastPlayer();
             }
             return play; 
+        }
+
+        const showColorRes = function(row, col){
+            for (let i=0; i<row.length; i++){
+                const id = `r_${row[i]}_c_${col[i]}`
+                const grid_elem = document.getElementById(id);
+                grid_elem.classList.add("won");
+            }
         }
     
         const compareArray = (x, y) => JSON.stringify(x) === JSON.stringify(y);
@@ -111,7 +134,18 @@ const tictactoe = (function() {
         const checkDiagonals = function(board_actual, marker) {
             const result1 = [board_actual[0][0], board_actual[1][1], board_actual[2][2]];
             const result2 = [board_actual[0][2], board_actual[1][1], board_actual[2][0]];
-            return (compareArray(result1, [marker, marker, marker]) || compareArray(result2, [marker, marker, marker]));
+            if (compareArray(result1, [marker, marker, marker])) {
+                showColorRes([0,1,2], [0,1,2]);
+                return true;
+            }
+            else if (compareArray(result2, [marker, marker, marker])) {
+                showColorRes([0,1,2], [2,1,0])
+                return true;
+            }
+            else {
+                return false
+            }
+            
         }
     
         const checkRows = function(board_actual, marker) {
@@ -119,6 +153,7 @@ const tictactoe = (function() {
             for (let row=0; row<rows; row++) {
                 const boardRow = board_actual[row];
                 if (compareArray(boardRow, [marker, marker, marker])) {
+                    showColorRes(Array(3).fill(row), [0,1,2])
                     return true;
                 }
             }
@@ -130,6 +165,7 @@ const tictactoe = (function() {
             for (let col=0;col<cols;col++) {
                 const boardCol = board_actual.map(x => x[col]);
                 if (compareArray(boardCol, [marker, marker, marker])) {
+                    showColorRes([0,1,2], Array(3).fill(col))
                     return true;
                 }
             }
@@ -150,21 +186,138 @@ const tictactoe = (function() {
 })()
 
 
+function displayController(){
 
+    let player1;
+    let player2;
+    const Board = tictactoe.Gameboard();
+    let game;
+    let round = 0;
 
-const player1 = tictactoe.Player("test1", "x");
-const player2 = tictactoe.Player("test2", "o");
+    const initDialog = function() {
+        const dialog = document.getElementById("restart-game");
+        dialog.close();
 
-const Board = tictactoe.Gameboard();
+        const Restart_btn = document.getElementById("restart");
+        Restart_btn.addEventListener("click", function(event){
+            initGame();
+        });
 
-const game = tictactoe.gameController(player1, player2, Board);
-game.resetGame();
+    }
 
-while(!(game.endGame())) {
-    const player = game.showPlayer();
-    let pos_r = parseInt(prompt(`Please choose row ${player.name}` , "0,1 or 2"));
-    let pos_c = parseInt(prompt(`Please choose column ${player.name}` , "0,1 or 2"));
+    const initGetPlayer = function() {
+        const p1_input = document.getElementById("player1");
+        const p2_input = document.getElementById("player2");
 
-    game.playRound(pos_c, pos_r);
+        if (p1_input.value.length === 0) {
+            p1_input.value = "Joe";
+        }
+        if (p2_input.value.length === 0) {
+            p2_input.value = "Ana";
+        }
 
+        player1 = tictactoe.Player(p1_input.value, "X");
+        player2 = tictactoe.Player(p2_input.value, "O");
+    }
+
+    const getGridElem = function(event) {
+        const player = game.showPlayer();
+        let target = event.target;
+        target.textContent = player.marker
+        if (target.className != "grid_elem") return
+        let [pos_r, pos_c] = target.id.match(/\d+/g);
+        playGame(parseInt(pos_c), parseInt(pos_r));
+    }
+
+    const showPlayerActual = function() {
+        const player = game.showPlayer();
+        const p1_div = document.getElementsByClassName("player1")[0];
+        const p2_div = document.getElementsByClassName("player2")[0];
+        if (player.marker == "X") {
+            p1_div.classList.add("active");
+            p2_div.classList.remove("active");
+        }
+        else {
+            p2_div.classList.add("active")
+            p1_div.classList.remove("active");
+        }
+    }
+    
+    const initGame = function() {
+        const grid = document.getElementsByClassName("grid")[0];
+        round = 0;
+        initGetPlayer();
+        initDialog();
+        Board.generateBoard();
+        game = tictactoe.gameController(player1, player2, Board);
+        game.resetGame();
+        
+        grid.onclick = function(event) {
+            getGridElem(event);
+            showPlayerActual();
+        }
+    }
+
+    // Generate the final result
+    const genResult = function() {
+        const last_player = game.showPlayer();
+        const players = [player1, player2];
+        const player_actual = players.filter(function(elem) {return elem.marker != last_player.marker})[0];
+        
+        const result_div = document.getElementById("result-game");
+        if (round == 9) {
+            result_div.textContent = `Its a tie. Do you want to restart a game ?`
+        }
+        else {
+            result_div.textContent = `Congratulation ${player_actual.name} won. Do you want to restart a game ?`
+        }
+    }
+
+    // Check if we have ended the game and show the message
+    const checkResult = function() {
+
+        if (game.endGame()) {
+            const grid = document.getElementsByClassName("grid")[0];
+            const dialog = document.getElementById("restart-game");
+            
+            genResult();
+            //Reset grid event
+            grid.onclick = function() {
+                return false;
+            }
+            // Show Modal
+            dialog.showModal();
+        }
+    }
+
+    const playGame = function(pos_c, pos_r) {
+        round +=1;
+        game.playRound(pos_c, pos_r);
+        checkResult();
+    }
+
+    return {initGame};
+    
 }
+
+displayController().initGame()
+
+// tictactoe.Gameboard().generateBoard()
+
+
+// const player1 = tictactoe.Player("test1", "X");
+// const player2 = tictactoe.Player("test2", "O");
+
+// const Board = tictactoe.Gameboard();
+
+// const game = tictactoe.gameController(player1, player2, Board);
+// game.resetGame();
+
+// while(!(game.endGame())) {
+//     const player = game.showPlayer();
+//     let pos_r = parseInt(prompt(`Please choose row ${player.name}` , "0,1 or 2"));
+//     let pos_c = parseInt(prompt(`Please choose column ${player.name}` , "0,1 or 2"));
+
+//     game.playRound(pos_c, pos_r);
+
+// }

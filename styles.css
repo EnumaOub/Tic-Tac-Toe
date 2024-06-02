@@ -41,5 +41,97 @@ footer {
 
 }
 
+/* Main */
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5rem;
+    margin-top: 1rem;
+}
+
+.player {
+    display: flex;
+    gap: 1rem;
+}
+
+.player .active label {
+    font-weight: 800;
+}
+
+.player .active input {
+    background-color: rgba(0, 0, 255, 0.2);
+}
+
+.player1, .player2 {
+    display: flex;
+    flex-direction: column;
+}
+
+.player1 label, .player2 label {
+    align-self: center;
+}
+
+/* Gameboard */
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 5rem);
+    grid-template-rows: repeat(3, 5rem);
+}
+
+.grid div {
+    border: 1px solid rgba(0, 0, 0, 0.6);
+}
+
+.grid_elem {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.grid_elem.won {
+    background-color: rgba(0, 255, 0, 0.4);
+}
+/* Dialog */
+
+dialog {
+    position: absolute;
+    top: 40%;
+    left: 30%;
+    width: 40%;
+    background-color: var(--back-shelves);
+}
 
 
+dialog div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+dialog::backdrop {
+    background-color: rgba(153, 153, 153, 0.781);
+}
+dialog button {
+    margin-top: 1rem;
+    border-radius: 2rem;
+    border: 1px solid black;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+#close-form {
+    background-color: red;
+    color: #f6f3e9;
+}
+
+dialog #result-game {
+    font-size: 2rem;
+    font-weight: 800;
+}
