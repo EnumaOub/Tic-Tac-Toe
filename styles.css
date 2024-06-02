@@ -107,6 +107,11 @@ main {
     align-items: center;
     font-size: 4rem;
     font-weight: bold;
+    cursor: pointer;
+}
+
+.grid_elem:hover {
+    background-color: rgba(0, 0, 255, 0.1);
 }
 
 .grid_elem.won {

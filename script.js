@@ -306,23 +306,3 @@ const tictactoe = (function() {
 
 
 tictactoe.displayController().initGame()
-
-// tictactoe.Gameboard().generateBoard()
-
-
-// const player1 = tictactoe.Player("test1", "X");
-// const player2 = tictactoe.Player("test2", "O");
-
-// const Board = tictactoe.Gameboard();
-
-// const game = tictactoe.gameController(player1, player2, Board);
-// game.resetGame();
-
-// while(!(game.endGame())) {
-//     const player = game.showPlayer();
-//     let pos_r = parseInt(prompt(`Please choose row ${player.name}` , "0,1 or 2"));
-//     let pos_c = parseInt(prompt(`Please choose column ${player.name}` , "0,1 or 2"));
-
-//     game.playRound(pos_c, pos_r);
-
-// }
