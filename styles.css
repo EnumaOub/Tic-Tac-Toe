@@ -52,7 +52,7 @@ main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 5rem;
+    gap: 2rem;
     margin-top: 1rem;
 }
 
@@ -76,6 +76,17 @@ main {
 
 .player1 label, .player2 label {
     align-self: center;
+}
+
+.player1 input, .player2 input {
+    padding: 0.5rem;
+    border: 1px solid black;
+    border-radius: 2rem;
+    font-size: 1.2rem;
+}
+
+.player1 input:focus, .player2 input:focus {
+    outline: 2px solid black;
 }
 
 /* Gameboard */
@@ -144,10 +155,7 @@ dialog button {
     cursor: pointer;
 }
 
-#close-form {
-    background-color: red;
-    color: #f6f3e9;
-}
+
 
 dialog #result-game {
     font-size: 2rem;

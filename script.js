@@ -248,6 +248,7 @@ const tictactoe = (function() {
             Board.generateBoard();
             game = gameController(player1, player2, Board);
             game.resetGame();
+            showPlayerActual();
             
             grid.onclick = function(event) {
                 getGridElem(event);
